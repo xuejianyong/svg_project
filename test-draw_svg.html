@@ -1,0 +1,800 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>test draw svg</title>
+<script>
+function draw() {
+	var interval = 50;
+	var innerDist = interval/2;
+	var xcenter = innerDist + 1*interval;
+	var ycenter = innerDist + 1*interval;
+	
+	var ctx = document.getElementById('canvas').getContext('2d');
+	
+    
+	ctx.fillStyle = '#0F9';
+	ctx.fillRect(0,0,50,450);
+	ctx.fillRect(50,0,450,50);
+	ctx.fillRect(450,50,50,450);
+	ctx.fillRect(0,450,450,50);
+	ctx.fillRect(interval*2,interval*2,interval*5,interval*1);
+	ctx.fillRect(interval*2,interval*3,interval*6,interval*4);
+	ctx.fillRect(interval*3,interval*7,interval*5,interval*1);
+	ctx.fillRect(interval*8,interval*1,interval*1,interval*1);
+	ctx.fillRect(interval*1,interval*8,interval*1,interval*1);
+	
+	ctx.save();
+
+	var img=document.getElementById("arrow");
+	
+	ctx.fillStyle = "green";
+	ctx.beginPath();
+	ctx.arc(xcenter,ycenter,10,0,2*Math.PI);
+	ctx.fill();
+	
+	ctx.translate(xcenter,ycenter);
+	
+	ctx.fillStyle = "green";
+	ctx.beginPath();
+	ctx.arc(0,0,10,0,2*Math.PI);
+	ctx.fill();
+	ctx.drawImage(img,-innerDist,-innerDist,50,50);
+
+	xcenter =  interval;
+	ycenter = 0;
+
+	//alert(xcenter+" "+ycenter);
+	ctx.translate(xcenter,ycenter);
+	
+	ctx.fillStyle = "green";
+	ctx.beginPath();
+	ctx.arc(0,0,10,0,2*Math.PI);
+	ctx.fill();
+	
+	ctx.rotate(90*Math.PI/180);
+	ctx.drawImage(img,-innerDist,-innerDist,50,50);
+
+	ctx.fillRect(0,0,50,25);
+
+/*
+	ctx.fillStyle = "#30F";
+	ctx.beginPath();
+	ctx.moveTo(xcenter,ycenter-innerDist);
+	ctx.lineTo(xcenter-innerDist,ycenter+innerDist);
+	ctx.lineTo(xcenter, ycenter+innerDist/2);
+	ctx.lineTo(xcenter+innerDist, ycenter+innerDist);
+	ctx.closePath();
+	ctx.fill();
+
+	ctx.save();
+
+	xcenter = xcenter + interval;
+	ctx.translate(xcenter,ycenter);
+	ctx.rotate(90*Math.PI/180);
+	ctx.fillStyle = "#30F";
+	ctx.beginPath();
+	ctx.moveTo(0,-innerDist);
+	ctx.lineTo(-innerDist,innerDist);
+	ctx.lineTo(0, innerDist/2);
+	ctx.lineTo(innerDist, innerDist);
+	ctx.closePath();
+	ctx.fill();
+
+*/
+
+
+}
+
+var x = 0;
+var y = 0;
+
+var interactionImages = {
+	"e01":"move_forward",
+	"e00":"bump",
+	"e11":"turn_left",
+	"e21":"turn_right",
+	"e31":"feel_front_empty",
+	"e30":"feel_front_wall",
+	"e41":"feel_left_empty",
+	"e40":"feel_left_wall",
+	"e51":"feel_right_empty",
+	"e50":"feel_right_wall"
+}
+
+var nodes = [];
+function  drawWithRect(){
+	var nodeId = 1;
+	var layer = 1;
+	//var c=document.getElementById("canvas1");
+	//var ctx=c.getContext("2d");
+	
+	var interactionInfo = document.getElementById("information").value;
+	
+	//alert(interactionInfo);
+	var nodeStack = [];
+	var mainNode = new Node(interactionInfo);
+	
+	nodes.push(mainNode);
+	nodeStack.push(mainNode);
+	while(nodeStack.length !=0){
+		var upperNode = nodeStack.pop();
+		upperNode.layer = layer;
+		upperNode.nodeId = nodeId;
+		layer++;
+		nodeId++;
+
+		var upperNodeString = upperNode.infoString;
+		var subUpperString = "";
+		if(upperNodeString[0] == "<"){
+			subUpperString = upperNodeString.substring(1,upperNodeString.length-1);
+		}else{
+			subUpperString = upperNodeString;
+		}
+		//alert(subUpperString);
+		if(isHaveMark(subUpperString)){
+			var leftMark = [];
+			var rightMark = [];
+			var isFirstLetter = false;
+			var inervalPoint = 0;
+			for(var i=0;i<subUpperString.length;i++){
+				charString = subUpperString[i];
+				if(i==0 && charString != "<"){//第一个字符非"<"的情形
+					isFirstLetter = true;
+				}else{
+					if(isFirstLetter){
+						if(charString == "<"){
+							inervalPoint = i;
+							isFirstLetter = false;
+							break;
+						}
+					}else{//第一个字符是"<"的情形
+						if(charString == "<"){
+							leftMark.push(i);
+						}else if(charString == ">"){
+							leftMark.pop();
+							if(leftMark.length == 0){
+								inervalPoint = i+1;
+								//alert("the interval point position is: "+inervalPoint);
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			var rightString = subUpperString.substring(inervalPoint,subUpperString.length);
+			var rightNode = new Node(rightString);
+			rightNode.upperNode = upperNode;
+			rightNode.upperNodeDirection = "right";
+			nodeStack.push(rightNode);
+			nodes.push(rightNode);
+			upperNode.rightNode = rightNode;
+
+			var leftString = subUpperString.substring(0,inervalPoint);
+			var leftNode = new Node(leftString);
+			leftNode.upperNode = upperNode;
+			leftNode.upperNodeDirection = "left";
+			nodeStack.push(leftNode);
+			nodes.push(leftNode);
+			upperNode.leftNode = leftNode;
+			//alert("left: "+leftString+"  right:"+rightString);
+		}else{
+			upperNode.leftNode=null;
+			upperNode.rightNode = null;
+		}
+	}
+	//getLayers(nodes);
+	//alert(nodes.length);
+	for(var smallNode in nodes){
+		if(nodes[smallNode].nodeId == nodes.length){
+			nodes[smallNode].isLast = true;
+		}
+	}
+	
+	drawNodes(nodes);
+}
+
+
+function drawSvgRect(svg,x,y,width,height){
+	var rect=document.createElementNS('http://www.w3.org/2000/svg','rect'); 
+    rect.setAttribute("x",x);
+    rect.setAttribute("y",y);
+    rect.setAttribute("width",width);
+    rect.setAttribute("height",height);
+    rect.setAttribute("style","fill:none;stroke-width:2;stroke:rgb(0,0,0)");
+    svg.appendChild(rect);
+}
+
+//(svg,xindex,yindex,defaultmetre,defaultmetre,img2.getAttribute("src"))
+function drawSvgImage(svg,x,y,width,height,href){
+	//alert(x+" "+y+" "+width+" "+height+" "+href+" ");
+	var image1 = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    image1.setAttribute("x",x);
+    image1.setAttribute("y",y);
+	image1.setAttribute("href",href);
+    image1.setAttribute("width",width);
+    image1.setAttribute("height",height);
+    svg.appendChild(image1);
+
+}
+
+var marginpadding = 10;
+var imageBetweenMargin = 2;
+var x_index =60;
+var y_index = 60;
+var defaultmetre = 40;
+function drawNodes(nodes){
+	var svg = document.getElementById("svgid");
+	/*var nodesstring = "";
+	for(var testnode in nodes){
+		nodesstring = nodesstring+nodes[testnode].nodeId+":"+nodes[testnode].infoString+" layer:"+nodes[testnode].layer+" level:"+nodes[testnode].level+" "+nodes[testnode].isVisited+"\n";
+	}
+	alert(nodesstring);*/
+
+	var levels = 0;
+	var mainNode = nodes[0];
+	
+	var x_index_inner = 0;
+	var y_index_inner = 0;
+
+	//主要需要考虑两个方面的内容，一个是坐标点，一个是大小。
+	var farleft = getFarLeft(mainNode,nodes);
+	var drawNodesStack = [];
+
+	var nodeforvisit = farleft;
+	var xindex = x_index;
+	var yindex = y_index;
+	
+	while(!mainNode.isVisited){
+		var nodevisitString = nodeforvisit.infoString;
+		//alert(nodevisitString);
+		
+		if(nodevisitString[0] == "<"){//得到一个复杂节点
+			//alert("fuza ");
+			var levels = 1;
+			var rectw = marginpadding*2+defaultmetre*2+imageBetweenMargin;//要画的小框的尺寸
+			var recth = marginpadding*2+defaultmetre;
+
+			//xindex=xindex+marginpadding;
+			//ctx.strokeRect(xindex-marginpadding,yindex-marginpadding,rectw,recth);
+			drawSvgRect(svg,xindex-marginpadding,yindex-marginpadding,rectw,recth);
+			
+			//当前节点的位置尺寸参数信息
+			nodeforvisit.xindex = xindex-marginpadding;
+			nodeforvisit.yindex = yindex-marginpadding;
+			nodeforvisit.width = rectw;
+			nodeforvisit.height = recth;
+			nodeforvisit.level = levels;
+			
+			//显示两个图片
+			var subNodevisitString = nodevisitString.substring(1,nodevisitString.length-1);
+			var subNodevisitString1 = subNodevisitString.substring(0,3);
+			var subNodevisitString2 = subNodevisitString.substring(3,6);
+			var img1 = document.getElementById(interactionImages[subNodevisitString1]);
+			var img2 = document.getElementById(interactionImages[subNodevisitString2]);
+			
+			
+			//ctx.drawImage(img1,xindex,yindex,defaultmetre,defaultmetre);
+			drawSvgImage(svg,xindex,yindex,defaultmetre,defaultmetre,img1.getAttribute("src"));
+			xindex = xindex+defaultmetre+imageBetweenMargin;
+			//ctx.drawImage(img2,xindex,yindex,defaultmetre,defaultmetre);
+			drawSvgImage(svg,xindex,yindex,defaultmetre,defaultmetre,img2.getAttribute("src"));
+			xindex = xindex+defaultmetre+marginpadding*2;
+			
+
+			if(nodeforvisit.upperNodeDirection == "left"){//当前为复杂左侧节点，将节点存入栈中
+				//计算一下当前节点与下一个右侧节点之间的间距
+				//alert("the left node");
+				var rightearestnode = rightNearest(nodeforvisit,nodes);
+				
+				var rightearestnodeString = rightearestnode.infoString;
+				var rightNodeMargin = rightearestnode.layer-nodeforvisit.layer;
+				if(rightearestnodeString[0] != "<"){
+						rightNodeMargin--;//因为在<e11e11>的情形当中，e11到<还有一个间距需要加上
+				}
+				xindex = xindex+marginpadding*rightNodeMargin;//得出了下一个右侧节点的画的 x坐标
+				drawNodesStack.push(nodeforvisit);
+
+			}else{//右侧 复杂 节点
+				var rightUpperNode = nodeforvisit;
+				while(rightUpperNode.upperNodeDirection == "right"){//开始画框了
+					//因为是右边的节点，所以需要结合左边的节点形成一个整体,layer表示同样相邻的两个节点之间的间距计算，level用于计算框体高度
+					var correspondLeft = drawNodesStack.pop();//得到左边的节点，比较两个节点之间的级别
+					if(correspondLeft.level > rightUpperNode.level){
+						levels = correspondLeft.level+1;
+					}else{
+						levels = rightUpperNode.level+1;
+					}
+								
+					//窗体的4个参数
+					var rectxindex = correspondLeft.xindex-marginpadding;
+					var rectyindex = 0;
+					var rectwidth = correspondLeft.width+rightUpperNode.width+marginpadding*3;
+					var rectheight = 0;
+					if(correspondLeft.level > rightUpperNode.level){
+						rectyindex = correspondLeft.yindex-marginpadding;
+						rectheight = correspondLeft.height+marginpadding*2;
+					}else{
+						var levelDifference = levels-correspondLeft.level;
+						rectyindex = correspondLeft.yindex-(marginpadding*levelDifference);
+						rectheight = correspondLeft.height+marginpadding*2*levelDifference;
+
+					}
+					//ctx.strokeRect(rectxindex,rectyindex,rectwidth,rectheight);
+					drawSvgRect(svg,rectxindex,rectyindex,rectwidth,rectheight);
+
+					rightUpperNode = rightUpperNode.upperNode;
+					rightUpperNode.xindex = rectxindex;
+					rightUpperNode.yindex = rectyindex;
+					rightUpperNode.width = rectwidth;
+					rightUpperNode.height = rectheight;
+					rightUpperNode.level = levels;//这块内容需要仔细思考
+					if(rightUpperNode.upperNodeDirection == "left"){
+						drawNodesStack.push(rightUpperNode);
+					}
+					xindex=xindex+marginpadding;
+				}
+				
+				if(!nodeforvisit.isLast){
+					//alert("the right complex node");
+					var rightearestnode = rightNearest(nodeforvisit,nodes);
+					
+					var rightearestnodeString = rightearestnode.infoString;
+					var rightNodeMargin = rightearestnode.layer-nodeforvisit.layer;
+					if(rightearestnodeString[0] != "<"){
+							rightNodeMargin--;//因为在<e11e11>的情形当中，e11到<还有一个间距需要加上
+					}
+					xindex = xindex+marginpadding*rightNodeMargin;//得出了下一个右侧节点的画的 x坐标
+				}
+			}
+		}else{//得到一个普通节点
+			//alert("得到一个普通节点");
+			var img = document.getElementById(interactionImages[nodevisitString]);
+			var levels = 0;
+			//当前简单节点的位置尺寸大小参数
+			nodeforvisit.xindex = xindex;
+			nodeforvisit.yindex = yindex;
+			nodeforvisit.width = defaultmetre;
+			nodeforvisit.height = defaultmetre;
+
+			//ctx.drawImage(img,xindex,yindex,defaultmetre,defaultmetre);
+			drawSvgImage(svg,xindex,yindex,defaultmetre,defaultmetre,img.getAttribute("src"));
+			xindex=xindex+defaultmetre+marginpadding;
+			
+			//由于画框与画图是分开的，所以两个坐标也是不同的，画框是通过前面的节点坐标和框的大小来的，画图是依据位移偏量来进行的
+			if(nodeforvisit.upperNodeDirection == "left"){//当前为左侧节点，将该节点存入栈中
+				//alert("这个结点是一个左方向的简单节点");
+				var rightearestnode = rightNearest(nodeforvisit,nodes);
+				var rightearestnodeString = rightearestnode.infoString;
+				var rightNodeMargin = rightearestnode.layer-nodeforvisit.layer;
+				if(rightearestnodeString[0] != "<"){
+						rightNodeMargin--;
+				}
+				xindex = xindex+marginpadding*rightNodeMargin;
+				drawNodesStack.push(nodeforvisit);
+			}else{//当前节点为右侧简单节点
+				var rightUpperNode = nodeforvisit;
+				while(rightUpperNode.upperNodeDirection == "right"){//这个只是为了画框吗？
+					//levels++;
+					//alert(nodeforvisit.infoString+" 得到一个简单节点");
+					var correspondLeft = drawNodesStack.pop();
+					if(correspondLeft.level > rightUpperNode.level){
+						levels = correspondLeft.level+1;
+					}else{
+						levels = rightUpperNode.level+1;
+					}
+					var rectxindex = correspondLeft.xindex-marginpadding;
+					var rectyindex = 0;
+					var rectwidth = correspondLeft.width+rightUpperNode.width+marginpadding*3;
+					var rectheight = 0;
+					if(correspondLeft.level > rightUpperNode){
+						rectyindex = correspondLeft.yindex-marginpadding;
+						rectheight = correspondLeft.height+marginpadding*2;
+					}else{
+						var levelDifference = levels-correspondLeft.level;
+						rectyindex = correspondLeft.yindex-(marginpadding*levelDifference);
+						rectheight = correspondLeft.height+marginpadding*2*levelDifference;
+
+					}
+
+					//ctx.strokeRect(rectxindex,rectyindex,rectwidth,rectheight);
+					drawSvgRect(svg,rectxindex,rectyindex,rectwidth,rectheight);
+					rightUpperNode = rightUpperNode.upperNode;
+
+					rightUpperNode.xindex = rectxindex;
+					rightUpperNode.yindex = rectyindex;
+					rightUpperNode.width = rectwidth;
+					rightUpperNode.height = rectheight;
+					rightUpperNode.level = levels;
+					if(rightUpperNode.upperNodeDirection == "left"){
+						drawNodesStack.push(rightUpperNode);
+					}
+					xindex=xindex+marginpadding//这里增加了一个单位，但是目前不知道这个是左什么用的;
+				}
+
+				if(!nodeforvisit.isLast){
+					//alert("the right complex node");
+					var rightearestnode = rightNearest(nodeforvisit,nodes);
+					var rightearestnodeString = rightearestnode.infoString;
+					var rightNodeMargin = rightearestnode.layer-nodeforvisit.layer;
+					if(rightearestnodeString[0] != "<"){
+							rightNodeMargin--;//因为在<e11e11>的情形当中，e11到<还有一个间距需要加上
+					}
+					xindex = xindex+marginpadding*rightNodeMargin;//得出了下一个右侧节点的画的 x坐标
+				}
+			}
+		}
+		updateNodes(nodeforvisit,nodes);
+		nodeforvisit = rightNearest(nodeforvisit,nodes);
+	}
+	
+	ctx.fillStyle = "green";
+	ctx.beginPath();
+	ctx.arc(xindex,yindex,6,0,2*Math.PI);
+	ctx.fill();
+	var nodesstring = "";
+	for(var testnode in nodes){
+		nodesstring = nodesstring+nodes[testnode].nodeId+":"+nodes[testnode].infoString+" layer:"+nodes[testnode].layer+" level:"+nodes[testnode].level+" "+nodes[testnode].isVisited+"\n";
+	}
+	//alert(nodesstring);
+}
+
+function  updateNodes(nodeforvisit,nodes){
+	/*var nodesstring = "";
+	for(var testnode in nodes){
+		nodesstring = nodesstring+nodes[testnode].nodeId+":"+nodes[testnode].infoString+" "+nodes[testnode].upperNodeDirection+" "+nodes[testnode].isVisited+"\n";
+	}
+	alert(nodesstring);*/
+	
+	//alert("这个节点 before 是："+nodeforvisit.infoString+":"+nodeforvisit.isVisited);
+	nodeforvisit.isVisited = true;
+	//alert("这个节点 after  是："+nodeforvisit.infoString+":"+nodeforvisit.isVisited);
+	var interNode = nodeforvisit;
+	if(interNode.upperNodeDirection == "right"){
+		//alert("进入右边更新内容");
+		while(interNode.upperNodeDirection == "right"){
+			//alert("进入右边里面的更新内容");
+			interNode = interNode.upperNode;
+			//alert(interNode.infoString+" "+interNode.upperNodeDirection+" "+interNode.isVisited);
+			interNode.isVisited = true;
+		}
+	}
+}
+
+function rightNearest(currentNode,nodes){
+	//alert("the right nearest node");
+	var pointNode = currentNode;
+	var node = null;
+	while(pointNode.upperNodeDirection == "right"){
+		pointNode = pointNode.upperNode;
+	}
+	if(pointNode.upperNodeDirection != "top"){
+		//alert(pointNode.infoString+" "+pointNode.upperNodeDirection);
+		pointNode = pointNode.upperNode.rightNode;
+		node = getFarLeft(pointNode,nodes);
+		return node;
+	}else{
+		node = null;
+		return node;
+	}
+}
+
+function  getFarLeft(mainNode,nodes){
+	//alert("the far left node");
+	var farleft = mainNode;
+	while(farleft.leftNode != null){
+		farleft = farleft.leftNode;
+	}
+	return farleft;
+}
+
+function isHaveMark(infoString){
+	var isHaveMark = false;
+	for(var i=0;i<infoString.length;i++){
+		var charString = infoString[i];
+		if(charString == "<" || charString==">"){
+			isHaveMark = true;
+		}
+	}
+	return isHaveMark;
+}
+
+function Node(inforstring){
+	this.infoString = inforstring;
+	this.upperNode = null;
+	this.upperNodeDirection = "top";
+	this.leftNode = null;
+	this.rightNode = null;
+	this.level = 0;
+	this.layer = 0;
+	this.nodeId = 0;
+	this.isVisited = false;
+	this.xindex = 0;
+	this.yindex = 0;
+	this.width = 0;
+	this.height = 0;
+	this.isLast = false;
+}
+
+
+function drawWithImage(){
+	var c=document.getElementById("canvas1");
+	var ctx=c.getContext("2d");
+	
+	var information = document.getElementById("information").value;
+
+	var marks = {"<":[],">":[]};
+	for(var i=0;i<information.length;i++){
+		var character = information[i]
+		if(character == "<"){
+			marks["<"].push({
+				key:i.toString(),
+				value:false
+			});
+		}else if(character == ">"){
+			marks[">"].push({
+				key:i.toString(),
+				value:false
+			});
+		}
+	}
+	//在获得了不同符号的位置信息以及访问信息之后，开始画interactions
+	var leftPositions = [];   //左侧括号的索引
+	var rightPositions = [];  //右侧括号的索引
+	var allCharacters = [];   //所有字符的字典
+	
+	for(var i=0;i<information.length;i++){
+		allCharacters.push(false);
+	}
+	
+	for(var i=0;i<information.length;i++){
+		var charString = information[i];
+		if(charString == "<"){
+			leftPositions.push(i);
+		}
+		var interactionStringBig = "";
+		if(charString == ">"){
+			rightPositions.push(i);
+			var left = leftPositions.pop();
+			
+			for(var j=left;j<=i;j++){
+				var innerChar = information[j];
+				if(!allCharacters[j]){
+					interactionStringBig+=innerChar;
+					allCharacters[j]= true;
+				}
+			}
+			var bigLength = interactionStringBig.length;
+			var interaction = interactionStringBig.substring(1,interactionStringBig.length-1);	
+			drawInteraction(ctx,interaction);
+		}
+	}
+
+}
+
+function drawInteraction(ctx,interaction){
+	var stringLength = interaction.length;
+	if(stringLength>3){
+		var interaction1 = interaction.substring(0,3);
+		var interaction2 = interaction.substring(3,6);
+		var img1 = document.getElementById(interactionImages[interaction1]);
+		var img2 = document.getElementById(interactionImages[interaction2]);
+		ctx.drawImage(img1,0,0);
+		ctx.drawImage(img2,10,10,100,100);
+	}else{
+		var img = document.getElementById(interactionImages[interaction]);
+		ctx.drawImage(img,30,30);	
+	}
+		
+}
+
+function drawScale(){
+	var c=document.getElementById("canvas");
+	var ctx=c.getContext("2d");
+	ctx.strokeRect(5,5,25,15);
+	ctx.scale(2,2);
+	ctx.strokeRect(5,5,25,15);
+	ctx.scale(2,2);
+	ctx.strokeRect(5,5,25,15);
+	ctx.scale(2,2);
+	ctx.strokeRect(5,5,25,15);
+
+
+}
+
+function initialize(){
+}
+
+
+var xcenter = 25;
+var ycenter = 25;
+function testmode(){
+	var c=document.getElementById("canvas1");
+	var ctx=c.getContext("2d");
+	ctx.fillStyle = "#f0f";
+	ctx.save();
+	
+	ctx.translate(xcenter,ycenter);
+	ctx.fillStyle = "#cc0";
+	ctx.fillRect(0,0,20,20);
+
+	/*var img1 = document.getElementById("arrow");
+	ctx.drawImage(img1,-25,-25,50,50);
+	ctx.translate(50,0);
+	ctx.fillRect(0,0,100,100);
+	ctx.rotate(90*Math.PI/180);
+	ctx.drawImage(img1,-25,-25,50,50);
+
+	ctx.fillRect(0,0,10,10);*/
+
+}
+
+function testButton(){
+	drawWithRect();
+
+	/*
+	var c=document.getElementById("canvas1");
+	var ctx=c.getContext("2d");
+	//ctx.fillStyle = "#cc0";
+	//	ctx.restore();
+	ctx.restore();
+	ctx.save();
+	xcenter = xcenter+50;
+	
+	alert("xcenter is:"+xcenter+" ycenter is: "+ycenter);
+	ctx.fillRect(0,0,30,30);
+	ctx.translate(xcenter,ycenter);
+	ctx.fillRect(0,0,30,30);
+*/
+	/*ctx.clearRect(xcenter-25,ycenter-25,50,50);
+	xcenter = xcenter+50;
+	ctx.translate(xcenter,ycenter);
+	ctx.fillRect(0,0,10,10);
+	ctx.rotate(90*Math.PI/180);
+	var img1 = document.getElementById("arrow");
+	ctx.drawImage(img1,xcenter-25,ycenter-25,50,50);*/
+	
+}
+
+function testSaveAndRestore(){
+	var c=document.getElementById("canvas1");
+	var ctx=c.getContext("2d");
+	ctx.fillRect(0,0,150,150);
+	ctx.save();
+
+	ctx.fillStyle = "#09F";
+	ctx.fillRect(15,15,120,120);
+	ctx.save();
+
+	ctx.fillStyle = "#fff";
+	ctx.globalAlpha = 0.5;//透明化的色彩
+	ctx.fillRect(30,30,90,90);
+	
+	ctx.restore();
+	ctx.fillRect(45,45,60,60);
+
+	ctx.restore();
+	ctx.fillRect(60,60,30,30);
+}
+
+function testTranslate(){
+	var c=document.getElementById("canvas1");
+	var ctx=c.getContext("2d");
+
+	ctx.fillStyle = "#09f";
+	ctx.fillRect(0,0,200,100);
+	ctx.translate(50,50);
+	ctx.fillStyle = "#0ff";
+	ctx.fillRect(0,0,200,100);
+	ctx.rotate(30*Math.PI/180);
+}
+
+function testRotate(){
+	var c=document.getElementById("canvas1");
+	var ctx=c.getContext("2d");
+	//ctx.fillStyle = "#09f";
+	//ctx.fillRect(0,0,200,100);
+
+	ctx.fillStyle = "#09F";
+	ctx.fillRect(200,200,200,100);
+	ctx.translate(300,250);
+	ctx.save();
+	//ctx.fillStyle = "#0ff";
+	//ctx.fillRect(0,0,200,100);
+	ctx.rotate(30*Math.PI/180);
+	ctx.fillStyle = "#f0f";
+	ctx.fillRect(-100,-50,200,100);
+	
+	ctx.restore();
+	ctx.rotate(30*Math.PI/180);
+	ctx.fillStyle = "#CC0";
+	ctx.fillRect(-100,-50,200,100);
+
+}
+
+function initialFunction(){
+	//tutorial();
+	var move_forward = document.getElementById("move_forward");
+	//alert(move_forward.getAttribute("src"));
+	
+}
+
+function testScale(){
+	//包括xy以及这个框的大小都会受到影响。
+	var ctx = document.getElementById('canvas1').getContext('2d');
+	ctx.fillStyle = "yellow";
+	ctx.fillRect(100,100,200,200);
+
+	ctx.scale(2,1);
+	ctx.fillStyle = "blue";
+	ctx.fillRect(100,100,200,200);
+
+	alert("the test code");
+	
+}
+
+function tutorial(){
+	var ctx = document.getElementById('canvas1').getContext('2d');
+	ctx.lineWidth = 5;
+	ctx.beginPath();
+	ctx.moveTo(50,250);
+	ctx.bezierCurveTo(150,50,350,450,450,250);
+	ctx.stroke();
+	
+}
+
+</script>
+
+<style type="text/css">
+.testcolor{
+	color:#09F;
+	color: #fff;
+}
+.sadfdfa {
+	color: #3F9;
+}
+</style>
+</head>
+
+<body onload="initialFunction();">
+<p>
+  <canvas id="canvas" width="10" height="10"></canvas>
+  <img id="arrow" src="images/arrow.png"  width="30" height="30" />
+  <img src="images/move_forward.png" id="move_forward" width="33" height="33" />
+  <img src="images/bump.png" id="bump" width="33" height="33" />
+  <img src="images/turn_left.png"  id="turn_left"  width="33" height="33" />
+  <img src="images/turn_right.png"   id="turn_right" width="33" height="33" />
+  <img src="images/feel_front_empty.png" id="feel_front_empty" width="33" height="33" />
+  <img src="images/feel_left_empty.png"  id="feel_left_empty" width="33" height="33" />
+  <img src="images/feel_right_empty.png"   id="feel_right_empty"  width="33" height="33" />
+  <img src="images/feel_front_wall.png" id="feel_front_wall" width="33" height="33" />
+  <img src="images/feel_left_wall.png" id="feel_left_wall" width="33" height="33" />
+  <img src="images/feel_right_wall.png" id="feel_right_wall" width="33" height="33" />
+
+</p>
+<p>&nbsp;</p>
+<p class="sadfdfa">adfdafadfasdfasd</p>
+
+<table width="1290" height="600" border="1" cellpadding="0" cellspacing="0" >
+  <tr>
+	<td width="1290">
+		<!--<canvas id="canvas1" width="1000" height="600"></canvas>-->
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width = "1000" height = "600" id="svgid" class="svgclass"></svg>
+	</td>
+	
+  </tr>
+</table>
+</p>
+<input type="text" id="information" value="<<<e11e11><e11e11>><<<<e11e11>e11>e11>e11>>" style="width:400px;">
+<input type="text" id="levels" value="2">
+<input type="button"  onclick="testButton();"  value="Text Button" style="width:100px; height:40px">
+
+<<<e11e11><e11e11>><<<<e11e11>e11>e11>e11>> 0
+<<<e11e11>e11><e11<e11e11>>>  1
+<e11<e11<e11<e11<e11e11>>>>> 1
+<<<<<e11e11>e11>e11>e11>e11> 1
+<e11<<<<e11e11>e11>e11>e11>> 1
+<<e11e11><<<<e11e11>e11>e11>e11>> 1
+</body>
+</html>

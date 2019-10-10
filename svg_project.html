@@ -28,10 +28,12 @@ function addicons(){
     //<image xlink:href="images/bump.png" width="50" height="50"></image>
 
     var rect=document.createElementNS('http://www.w3.org/2000/svg','rect'); 
-    rect.setAttribute("x","10");
-    rect.setAttribute("y","10");
-    rect.setAttribute("width","20");
-    rect.setAttribute("height","20");
+    rect.setAttribute("x","230");
+    rect.setAttribute("y","60");
+    rect.setAttribute("width","50");
+    rect.setAttribute("height","50");
+    rect.setAttribute("style","fill:none;stroke-width:2;stroke:rgb(0,0,0)");
+    
     svg.appendChild(rect);
 
 
@@ -51,12 +53,20 @@ function addicons(){
     svg.appendChild(image1);
     //alert(svg.innerHTML);
 
+    var text=document.createElementNS('http://www.w3.org/2000/svg','text'); 
+    text.setAttribute("x",300);
+    text.setAttribute("y",60);
+    text.textContent = "asdfadsff";
+    svg.appendChild(text);
+
     var testdiv = document.getElementById('testdivid');
     testdiv.innerHTML = "asdffafdfaf";
 
     testheight+=200;
     svg.setAttribute("height",testheight);
-    alert(svg.getAttribute("height"));
+    //alert(svg.getAttribute("height"));
+
+
     
 
 }
