@@ -105,8 +105,14 @@ function addicons(){
 
 }
 
+
+function AnticipationNode(proclivity){
+	this.interactions = [];
+	this.proclivity = proclivity;
+}
+
 function addiconsad(){
-    var listbig = [];
+    var anticipationNodes = [];
     var anticipationsString = document.getElementById("information").value;//<e01e01>_10|e11_0|e21_0|e30_0|e40_0|e50_0|e01_-5|<e01e00>_-5|<<e01e00>e21>_-8|<e00e21>_-13|
     var ancitipationStrings = anticipationsString.split("|");//<<e01e00>e21>_-8
     var maxInteractionNum = 0;
@@ -116,9 +122,11 @@ function addiconsad(){
         var antiInteraction = anticipationSmalls[0];
         var proclivity = anticipationSmalls[1];
         
-        var listsmall = [];
+        var antiNode = new AnticipationNode(proclivity);
+
+
         if(antiInteraction[0] != "<"){
-            listsmall.push(antiInteraction+"e");//e01e
+            antiNode.interactions.push(antiInteraction+"e");
             if(maxInteractionNum<1)maxInteractionNum = 1;
         }else{
             var listEIndexs = [];
@@ -128,14 +136,35 @@ function addiconsad(){
                     listEIndexs.push(j);
                 }
             }
+            
             if(maxInteractionNum<listEIndexs.length)maxInteractionNum = listEIndexs.length;
             for(var k in listEIndexs){
-                var interactionPiece = antiInteraction.substring(k,k+3);
-                listsmall.push(interactionPiece);
+                var interactionPiece = antiInteraction.substring(listEIndexs[k],listEIndexs[k]+3);
+                antiNode.interactions.push(interactionPiece);
             }
+            
         }
-        listbig.push(listsmall);
+        anticipationNodes.push(antiNode);
     }
+
+    
+    
+    var listbigString = "";
+    for(var antiNodeIndex in anticipationNodes){
+        antiNode = anticipationNodes[antiNodeIndex];
+        var antiInteractions = antiNode.interactions;
+        var listsmallstring = antiNode.proclivity;
+        for(var interactionPiece in antiInteractions){
+            listsmallstring = listsmallstring+" "+antiInteractions[interactionPiece];
+        }
+        listbigString = listbigString+"<p>"+listsmallstring+"</p>";
+    }
+
+    var testdivid = document.getElementById("testdivid");
+    testdivid.innerHTML = listbigString;
+    testdivid.style.display = "block";
+
+
     maxInteractionNum+=1;
     var maxiheight = 30*(ancitipationStrings.length-1);
     var maxiwidth = maxInteractionNum*30;
@@ -220,12 +249,12 @@ function draw() {
     
 </div>
 
-<input type="text" id="information" value="<e01e01>_10|e11_0|e21_0|e30_0|e40_0|e50_0|e01_-5|<e01e00>_-5|<<e01e00>e21>_-8|<e00e21>_-13|" style="width:400px;">
+<input type="text" id="information" value="<e01e01>_10|e11_0|e21_0|e30_0|e40_0|e50_0|e01_-5|<e01e00>_-5|<<e01e00>e21>_-8|<e00e21>_-13|" style="width:700px;">
 
 
 
 <input type="button" value="click the button" onclick="addiconsad();">
-<div id="testdivid" class="testdivclass">显示隐藏的内容</div>
+<div id="testdivid" class="testdivclass"></div>
 <!--<canvas id="cv" width="500" height="500" />-->
 </body>
 </html>
