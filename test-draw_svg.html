@@ -429,10 +429,8 @@ function drawNodes(nodes){
 		nodeforvisit = rightNearest(nodeforvisit,nodes);
 	}
 	
-	ctx.fillStyle = "green";
-	ctx.beginPath();
-	ctx.arc(xindex,yindex,6,0,2*Math.PI);
-	ctx.fill();
+	var rootnode = nodes[0]
+	alert(rootnode.xindex+" "+rootnode.yindex+" "+rootnode.width+" "+rootnode.height);
 	var nodesstring = "";
 	for(var testnode in nodes){
 		nodesstring = nodesstring+nodes[testnode].nodeId+":"+nodes[testnode].infoString+" layer:"+nodes[testnode].layer+" level:"+nodes[testnode].level+" "+nodes[testnode].isVisited+"\n";

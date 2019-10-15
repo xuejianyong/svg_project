@@ -8,7 +8,7 @@
     padding: 0px;
     border: 1px solid rgb(73, 243, 21);
     width: 1000px;
-    height: auto;
+    height: 600px;
     
 }
 
@@ -22,7 +22,7 @@
 .divclass{
     background-color: rgb(73, 243, 21);
     width: 800px;
-    height: 460px;
+    height: 560px;
     overflow:auto;
     position: relative;
 }
@@ -36,14 +36,26 @@
 }
 
 div.anticipationclass{
-    
-    display: block;
+    background-color: brown;;
+    display: none;
     position: absolute;
     left: 100px;
     top: 100px;
     width: 350px;
     height: 250px;;
 }
+
+div.compositeclass{
+    background-color: rgb(30, 24, 24);;
+    display: block;
+    position: absolute;
+    left: 150px;
+    top: 150px;
+    width: 50px;
+    height: 50px;
+}
+
+
 </style>
 <script>
 var testheight = 300;
@@ -112,6 +124,7 @@ function AnticipationNode(proclivity){
 }
 
 function addiconsad(){
+
     var anticipationNodes = [];
     var anticipationsString = document.getElementById("information").value;//<e01e01>_10|e11_0|e21_0|e30_0|e40_0|e50_0|e01_-5|<e01e00>_-5|<<e01e00>e21>_-8|<e00e21>_-13|
     var ancitipationStrings = anticipationsString.split("|");//<<e01e00>e21>_-8
@@ -241,6 +254,10 @@ function draw() {
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width = "600" height = "400" id="svgid" style="background-color: rgb(233, 231, 128);" ></svg>
         <div id="anticipationdiv" class="anticipationclass">
             <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width = "300" height = "200" id="anticipations" 
+            style="display: block;" ></svg>
+        </div>
+        <div id="compositediv" class="compositeclass">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width = "100" height = "100" id="composite" 
             style="display: block;" ></svg>
         </div>
     </div>
