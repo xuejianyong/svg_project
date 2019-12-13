@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>svg_project</title>
+<style>
+.outclass{
+    padding: 0px;
+    border: 1px solid rgb(73, 243, 21);
+    width: 600px;
+    height: 400px;
+    background-color: rgb(222, 235, 235);
+    position:  relative;
+}
+
+
+
+</style>
+<script>
+function addDiv(){
+    var divoutter = document.getElementById("outdiv");
+    var divinner=document.createElement("div");
+    //divinner.setAttribute("id","divinner");
+    //divinner.setAttribute("style","width:200px;height:100px;background-color: black");
+    divinner.style = "width:200px;height:100px;background-color: green;overflow: auto;"
+    divinner.id = "divinner";
+    divinner.style.position = "absolute";
+    divinner.style.left = "100px";
+    divinner.style.top = "100px";
+
+    var detailsvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    detailsvg.id = "detailsvg";
+    detailsvg.x = 0;
+    detailsvg.y = 0;
+    detailsvg.width = 300;
+    detailsvg.height = 150;
+    detailsvg.style.backgroundColor = "red";
+    divinner.appendChild(detailsvg);
+
+
+
+    
+
+    
+    divoutter.appendChild(divinner);
+    alert(divoutter.innerHTML);
+
+
+}
+
+
+
+
+</script>
+</head>
+
+<body>
+
+<div class="outclass" id="outdiv">
+    
+</div>
+
+<br/>
+<input type="button" value="add div" onclick="addDiv()">
+
+</body>
+</html>
