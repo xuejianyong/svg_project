@@ -2,15 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>svg_project</title>
+<title>create_div</title>
 <style>
 .outclass{
     padding: 0px;
     border: 1px solid rgb(73, 243, 21);
-    width: 600px;
-    height: 400px;
+    width: 800px;
+    height: 600px;
     background-color: rgb(222, 235, 235);
-    position:  relative;
+    position:absolute;
+    left: 500px;
 }
 
 
@@ -19,31 +20,72 @@
 <script>
 function addDiv(){
     var divoutter = document.getElementById("outdiv");
+
+
     var divinner=document.createElement("div");
     //divinner.setAttribute("id","divinner");
     //divinner.setAttribute("style","width:200px;height:100px;background-color: black");
-    divinner.style = "width:200px;height:100px;background-color: green;overflow: auto;"
+    divinner.style = "border:1px solid green;width:100px;height:100px;background-color:none;overflow: auto;display:block;"
     divinner.id = "divinner";
     divinner.style.position = "absolute";
-    divinner.style.left = "100px";
-    divinner.style.top = "100px";
+    divinner.style.left = "0px";
+    divinner.style.top = "0px";
+    divoutter.appendChild(divinner);
 
     var detailsvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     detailsvg.id = "detailsvg";
-    detailsvg.x = 0;
-    detailsvg.y = 0;
-    detailsvg.width = 300;
-    detailsvg.height = 150;
-    detailsvg.style.backgroundColor = "red";
+    detailsvg.setAttribute("x",0);
+    detailsvg.setAttribute("y",0);
+    detailsvg.setAttribute("width",200);
+    detailsvg.setAttribute("height",200);
+    detailsvg.setAttribute("style","display:block;");
+
+
+    var img=document.getElementById("move_forward");
+    var image1 = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    image1.setAttribute("x",0);
+    image1.setAttribute("y",0);
+	image1.setAttribute("href",img.getAttribute("src"));
+    image1.setAttribute("width",200);
+    image1.setAttribute("height",200);
+    detailsvg.appendChild(image1);
+
+
     divinner.appendChild(detailsvg);
-
-
-
     
+    /********************************   test      **********************************/
 
-    
-    divoutter.appendChild(divinner);
-    alert(divoutter.innerHTML);
+    var divinner2=document.createElement("div");
+    //divinner.setAttribute("id","divinner");
+    //divinner.setAttribute("style","width:200px;height:100px;background-color: black");
+    divinner2.style = "border:1px solid green;width:200px;height:200px;background-color: none;overflow: auto;"
+    divinner2.id = "divinner2";
+    divinner2.style.position = "absolute";
+    divinner2.style.left = "120px";
+    divinner2.style.top = "0px";
+    divoutter.appendChild(divinner2);
+
+    var detailsvg2 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    detailsvg2.id = "detailsvg2";
+    detailsvg2.setAttribute("x",0)
+    detailsvg2.setAttribute("y",0)
+    detailsvg2.setAttribute("width",300)
+    detailsvg2.setAttribute("height",300)
+    detailsvg2.setAttribute("style","background-color:blue;")
+    divinner2.appendChild(detailsvg2);
+
+    var img=document.getElementById("move_forward");
+    var image1 = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    image1.setAttribute("x",0);
+    image1.setAttribute("y",0);
+	image1.setAttribute("href",img.getAttribute("src"));
+    image1.setAttribute("width",200);
+    image1.setAttribute("height",200);
+    detailsvg2.appendChild(image1);
+
+
+
+    console.log(divoutter.innerHTML);
 
 
 }
@@ -60,8 +102,19 @@ function addDiv(){
     
 </div>
 
-<br/>
 <input type="button" value="add div" onclick="addDiv()">
 
+
+<div id="divinner" style="border: 1px solid green; width: 100px; height: 100px; overflow: auto; position: absolute; left: 100px; bottom: 100px;"><svg id="detailsvg" x="0" y="0" width="200" height="200" style="position:absolute;left:0px;bottom:0px;"><image x="0" y="0" href="images/move_forward.png" width="200" height="200"></image></svg></div>
+<img src="images/move_forward.png" id="move_forward" width="33" height="33" />
+<img src="images/bump.png" id="bump" width="33" height="33" />
+<img src="images/turn_left.png"  id="turn_left"  width="33" height="33" />
+<img src="images/turn_right.png"   id="turn_right" width="33" height="33" />
+<img src="images/feel_front_empty.png" id="feel_front_empty" width="33" height="33" />
+<img src="images/feel_left_empty.png"  id="feel_left_empty" width="33" height="33" />
+<img src="images/feel_right_empty.png"   id="feel_right_empty"  width="33" height="33" />
+<img src="images/feel_front_wall.png" id="feel_front_wall" width="33" height="33" />
+<img src="images/feel_left_wall.png" id="feel_left_wall" width="33" height="33" />
+<img src="images/feel_right_wall.png" id="feel_right_wall" width="33" height="33" />
 </body>
 </html>
