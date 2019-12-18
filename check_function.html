@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>test draw svg</title>
+<title>chect function</title>
 <script>
 function draw() {
 	var interval = 50;
@@ -104,6 +104,9 @@ var interactionImages = {
 
 var nodes = [];
 function  drawWithRect(){
+
+	//testici
+	
 	var nodeId = 1;
 	var layer = 1;
 	//var c=document.getElementById("canvas1");
@@ -132,6 +135,7 @@ function  drawWithRect(){
 			subUpperString = upperNodeString;
 		}
 		//alert(subUpperString);
+		
 		if(isHaveMark(subUpperString)){
 			var leftMark = [];
 			var rightMark = [];
@@ -219,11 +223,11 @@ function drawSvgImage(svg,x,y,width,height,href){
 
 }
 
-var marginpadding = 10;
+var marginpadding = 4;
 var imageBetweenMargin = 2;
 var x_index =60;
 var y_index = 60;
-var defaultmetre = 40;
+var defaultmetre = 20;
 function drawNodes(nodes){
 	var svg = document.getElementById("svgid");
 	/*var nodesstring = "";
@@ -258,7 +262,7 @@ function drawNodes(nodes){
 
 			//xindex=xindex+marginpadding;
 			//ctx.strokeRect(xindex-marginpadding,yindex-marginpadding,rectw,recth);
-			drawSvgRect(svg,xindex-marginpadding,yindex-marginpadding,rectw,recth);
+			drawSvgRect(svg,xindex-marginpadding,yindex-marginpadding,rectw,recth);//给出矩形框的x y width height坐标内容
 			
 			//当前节点的位置尺寸参数信息
 			nodeforvisit.xindex = xindex-marginpadding;
@@ -267,14 +271,12 @@ function drawNodes(nodes){
 			nodeforvisit.height = recth;
 			nodeforvisit.level = levels;
 			
-			//显示两个图片
-			var subNodevisitString = nodevisitString.substring(1,nodevisitString.length-1);
+			//画出两个图片
+			var subNodevisitString = nodevisitString.substring(1,nodevisitString.length-1);//给出这个串的具体内容
 			var subNodevisitString1 = subNodevisitString.substring(0,3);
 			var subNodevisitString2 = subNodevisitString.substring(3,6);
 			var img1 = document.getElementById(interactionImages[subNodevisitString1]);
 			var img2 = document.getElementById(interactionImages[subNodevisitString2]);
-			
-			
 			//ctx.drawImage(img1,xindex,yindex,defaultmetre,defaultmetre);
 			drawSvgImage(svg,xindex,yindex,defaultmetre,defaultmetre,img1.getAttribute("src"));
 			xindex = xindex+defaultmetre+imageBetweenMargin;
@@ -771,14 +773,13 @@ function tutorial(){
   <img src="images/feel_right_wall.png" id="feel_right_wall" width="33" height="33" />
 
 </p>
-<p>&nbsp;</p>
 <p class="sadfdfa">adfdafadfasdfasd</p>
 
-<table width="1290" height="600" border="1" cellpadding="0" cellspacing="0" >
+<table width="1290" height="300" border="1" cellpadding="0" cellspacing="0" >
   <tr>
 	<td width="1290">
 		<!--<canvas id="canvas1" width="1000" height="600"></canvas>-->
-		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width = "1000" height = "600" id="svgid" class="svgclass"></svg>
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width = "1000" height = "300" id="svgid" class="svgclass"></svg>
 	</td>
 	
   </tr>

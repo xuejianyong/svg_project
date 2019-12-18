@@ -25,37 +25,48 @@ function addDiv(){
     var divinner=document.createElement("div");
     //divinner.setAttribute("id","divinner");
     //divinner.setAttribute("style","width:200px;height:100px;background-color: black");
-    divinner.style = "border:1px solid green;width:100px;height:100px;background-color:none;overflow: auto;display:block;"
+    divinner.style = "border:1px solid red;width:500px;height:500px;background-color:none;overflow: auto;display:block;"
     divinner.id = "divinner";
     divinner.style.position = "absolute";
     divinner.style.left = "0px";
     divinner.style.top = "0px";
     divoutter.appendChild(divinner);
+    
 
     var detailsvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     detailsvg.id = "detailsvg";
-    detailsvg.setAttribute("x",0);
-    detailsvg.setAttribute("y",0);
-    detailsvg.setAttribute("width",200);
-    detailsvg.setAttribute("height",200);
-    detailsvg.setAttribute("style","display:block;");
+    detailsvg.setAttribute("width",500);
+    detailsvg.setAttribute("height",500);
+    detailsvg.setAttribute("style","display:block;background-color:blue;");
+    divinner.appendChild(detailsvg);
 
+    var compositeSvgGroup = document.createElementNS('http://www.w3.org/2000/svg','g'); //创建 svg group
+    compositeSvgGroup.setAttribute("id","compositeGroup");
+    compositeSvgGroup.setAttribute("style","display:block;");
+    compositeSvgGroup.setAttribute("width",300);
+    compositeSvgGroup.setAttribute("height",300);
+    detailsvg.appendChild(compositeSvgGroup);
 
     var img=document.getElementById("move_forward");
     var image1 = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-    image1.setAttribute("x",0);
-    image1.setAttribute("y",0);
+    image1.setAttribute("id","image1");
+    image1.setAttribute("x",20);
+    image1.setAttribute("y",20);
 	image1.setAttribute("href",img.getAttribute("src"));
     image1.setAttribute("width",200);
     image1.setAttribute("height",200);
-    detailsvg.appendChild(image1);
+    compositeSvgGroup.appendChild(image1);
 
 
-    divinner.appendChild(detailsvg);
+
+    
+
+
+    
     
     /********************************   test      **********************************/
 
-    var divinner2=document.createElement("div");
+    /*var divinner2=document.createElement("div");
     //divinner.setAttribute("id","divinner");
     //divinner.setAttribute("style","width:200px;height:100px;background-color: black");
     divinner2.style = "border:1px solid green;width:200px;height:200px;background-color: none;overflow: auto;"
@@ -74,23 +85,30 @@ function addDiv(){
     detailsvg2.setAttribute("style","background-color:blue;")
     divinner2.appendChild(detailsvg2);
 
+    
+
     var img=document.getElementById("move_forward");
     var image1 = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+    image1.setAttribute("id","adfsdaffasf");
     image1.setAttribute("x",0);
     image1.setAttribute("y",0);
 	image1.setAttribute("href",img.getAttribute("src"));
     image1.setAttribute("width",200);
     image1.setAttribute("height",200);
     detailsvg2.appendChild(image1);
-
-
+*/
 
     console.log(divoutter.innerHTML);
 
 
 }
 
+function removeSVG(){
+   var divinner = document.getElementById("divinner");
+   divinner.style.left = "50px";
+    console.log(divoutter.innerHTML);
 
+}
 
 
 </script>
@@ -102,7 +120,7 @@ function addDiv(){
     
 </div>
 
-<input type="button" value="add div" onclick="addDiv()">
+<input type="button" value="add div" onclick="addDiv();"> &nbsp; &nbsp;<input type="button" value="remove svg element" onclick="removeSVG();">
 
 
 <div id="divinner" style="border: 1px solid green; width: 100px; height: 100px; overflow: auto; position: absolute; left: 100px; bottom: 100px;"><svg id="detailsvg" x="0" y="0" width="200" height="200" style="position:absolute;left:0px;bottom:0px;"><image x="0" y="0" href="images/move_forward.png" width="200" height="200"></image></svg></div>

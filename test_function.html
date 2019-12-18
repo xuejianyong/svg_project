@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>create_div</title>
+<style>
+.outclass{
+    padding: 0px;
+    border: 1px solid rgb(73, 243, 21);
+    width: 800px;
+    height: 600px;
+    background-color: rgb(222, 235, 235);
+    position:absolute;
+    left: 500px;
+}
+
+
+
+</style>
+<script>
+function testFunction(){
+    var sourceString = document.getElementById("sourceString").value;
+    
+    alert(sourceString.length+" "+sourceString.substring(1,sourceString.length-1));
+}
+
+</script>
+</head>
+
+<body>
+
+<div class="outclass" id="outdiv">
+    
+</div>
+
+<input id="sourceString" type="text" value="abcdef">
+
+<input id="test" type="text" value="" >
+
+<input type="button" value="add div" onclick="testFunction()">
+
+
+
+</body>
+</html>
